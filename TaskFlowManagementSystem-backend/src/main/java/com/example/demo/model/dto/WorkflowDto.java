@@ -1,5 +1,11 @@
 package com.example.demo.model.dto;
 
-public class WorkflowDto {
+import java.time.LocalDateTime;
 
+public class WorkflowDto {
+	  	private Long id;                    // Workflow 唯一識別
+	    private String name;                // 流程名稱
+	    private Integer version;            // 版本號
+	    private LocalDateTime createdAt;    // 建立時間
+	    private Long createdBy;             // 建立者 userId
 }
