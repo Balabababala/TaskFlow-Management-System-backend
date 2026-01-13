@@ -11,6 +11,7 @@ import io.lettuce.core.dynamic.annotation.Param;
 
 public interface UserRepository extends JpaRepository<User, Long>{
 	    Optional<User> findByUsername(String username);
+	    Optional<User> findByUserId(Long id);
 	    Optional<User> findByEmail(String email);
 	    
 	 // 查使用者及其角色

@@ -2,6 +2,9 @@ package com.example.demo.model.dto;
 
 import java.time.LocalDateTime;
 
+import lombok.Data;
+
+@Data
 public class WorkflowDto {
 	  	private Long id;                    // Workflow 唯一識別
 	    private String name;                // 流程名稱
