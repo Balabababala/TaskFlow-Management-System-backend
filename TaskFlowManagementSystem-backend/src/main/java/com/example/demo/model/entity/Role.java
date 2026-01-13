@@ -10,7 +10,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Boolean active; 
+    private Boolean active=true; 
     
     @Column(name = "role_name", nullable = false, unique = true)
     private String roleName;

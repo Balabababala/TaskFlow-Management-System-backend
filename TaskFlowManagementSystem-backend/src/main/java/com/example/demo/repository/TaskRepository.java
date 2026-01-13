@@ -28,5 +28,5 @@ public interface TaskRepository  extends JpaRepository<Task, Long>{
                    "JOIN workflow w ON t.workflow_id = w.id " +
                    "WHERE t.id = :taskId",
            nativeQuery = true)
-    Object findTaskWithAllRelations(@Param("taskId") Integer taskId);
+    Object findTaskWithAllRelations(@Param("taskId") Long taskId);
 }

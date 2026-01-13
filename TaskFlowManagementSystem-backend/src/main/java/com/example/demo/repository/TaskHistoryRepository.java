@@ -23,5 +23,5 @@ public interface TaskHistoryRepository extends JpaRepository<TaskHistory, Long> 
              "WHERE t.id = :taskId " +
              "ORDER BY th.timestamp ASC",
      nativeQuery = true)
-	 List<Object[]> findTaskHistoryWithRelations(@Param("taskId") Integer taskId);
+	 List<Object[]> findTaskHistoryWithRelations(@Param("taskId") Long taskId);
 }

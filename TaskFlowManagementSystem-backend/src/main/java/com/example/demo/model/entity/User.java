@@ -19,7 +19,7 @@ public class User {
 
     private String email;
 
-    private Boolean active; 
+    private Boolean active=true; 
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)

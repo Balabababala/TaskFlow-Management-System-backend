@@ -31,7 +31,7 @@ public class WorkflowMapper {
 		workflow.setName(workflowDto.getName());
 		workflow.setVersion(workflowDto.getVersion());
 		workflow.setCreatedAt(workflowDto.getCreatedAt());
-		User user = userRepository.findByUserId(workflowDto.getCreatedBy()).orElseThrow(() -> new RuntimeException("User not found"));
+		User user = userRepository.findById(workflowDto.getCreatedBy()).orElseThrow(() -> new RuntimeException("User not found"));
 		workflow.setCreatedBy(user);
 		
 		return workflow;

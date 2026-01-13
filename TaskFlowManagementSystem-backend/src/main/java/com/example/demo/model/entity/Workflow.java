@@ -19,7 +19,7 @@ public class Workflow {
 
     private Integer version;
 
-    private Boolean active; 
+    private Boolean active=true; 
     @CreationTimestamp
     private LocalDateTime createdAt;
 

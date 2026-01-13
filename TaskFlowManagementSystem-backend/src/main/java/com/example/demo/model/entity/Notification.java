@@ -24,7 +24,7 @@ public class Notification {
 
     private String message;
 
-    private Boolean active; 
+    private Boolean active =true; 
     
     private Boolean readFlag = false;
 

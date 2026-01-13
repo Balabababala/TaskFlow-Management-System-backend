@@ -12,10 +12,10 @@ import io.lettuce.core.dynamic.annotation.Param;
 
 public interface TaskAssigneeRepository extends JpaRepository<TaskAssignee, Long>{
 	 // 查某任務所有被指派者
-    List<TaskAssignee> findByTaskId(Integer taskId);
+    List<TaskAssignee> findByTaskId(Long taskId);
 
     // 查某使用者被指派的任務
-    List<TaskAssignee> findByUserId(Integer userId);
+    List<TaskAssignee> findByUserId(Long userId);
 
     // 查某使用者負責的某個任務節點
     @Query(value = "SELECT ta.id AS ta_id, ta.assigned_at, " +
@@ -28,5 +28,5 @@ public interface TaskAssigneeRepository extends JpaRepository<TaskAssignee, Long
             "JOIN status s ON ta.status_id = s.id " +
             "WHERE t.id = :taskId",
     nativeQuery = true)
-    List<Object[]> findTaskAssigneeWithRelations(@Param("taskId") Integer taskId);
+    List<Object[]> findTaskAssigneeWithRelations(@Param("taskId") Long taskId);
 }

@@ -1,8 +1,10 @@
 package com.example.demo.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.demo.mapper.WorkflowMapper;
 import com.example.demo.model.dto.WorkflowDto;
@@ -10,6 +12,7 @@ import com.example.demo.model.entity.Workflow;
 import com.example.demo.repository.WorkflowRepository;
 import com.example.demo.service.WorkflowService;
 
+@Service
 public class WorkflowServiceImpl implements WorkflowService{
 	
 	@Autowired 
@@ -29,13 +32,19 @@ public class WorkflowServiceImpl implements WorkflowService{
 	};
 	
 	public void deleteWorkflow(Long id) {
-		
+		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+		workflow.setActive(false);
 	};
 	
 	public WorkflowDto findWorkflow(Long id) {
+		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+		return workflowMapper.entityToDto(workflow);
 		
 	};
+	
 	public List<WorkflowDto> findAllWorkflow(){
-		
+		return workflowRepository.findAll().stream()
+		.map(workflowMapper::entityToDto)
+		.collect(Collectors.toList());
 	};
 }

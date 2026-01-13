@@ -24,6 +24,6 @@ public interface WorkflowRepository extends JpaRepository<Workflow, Long>{
             "JOIN users u ON w.created_by = u.id " +
             "WHERE w.id = :workflowId",
     nativeQuery = true)
-    Object findWorkflowWithCreatorById(@Param("workflowId") Integer workflowId);
+    Object findWorkflowWithCreatorById(@Param("workflowId") Long workflowId);
 
 }

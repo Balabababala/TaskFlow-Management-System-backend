@@ -20,5 +20,5 @@ public interface StatusRepository extends JpaRepository<Status, Long>{
                    "JOIN workflow w ON s.workflow_id = w.id " +
                    "WHERE s.workflow_id = :workflowId",
            nativeQuery = true)
-    List<Object[]> findStatusWithMasterAndWorkflowNative(@Param("workflowId") Integer workflowId);
+    List<Object[]> findStatusWithMasterAndWorkflowNative(@Param("workflowId") Long workflowId);
 }
