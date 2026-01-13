@@ -24,6 +24,8 @@ public class Notification {
 
     private String message;
 
+    private Boolean active; 
+    
     private Boolean readFlag = false;
 
     @CreationTimestamp

@@ -9,7 +9,7 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public class workflowMapper {
+public class WorkflowMapper {
 	
 	
 	@Autowired

@@ -10,6 +10,8 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Boolean active; 
+    
     @Column(name = "role_name", nullable = false, unique = true)
     private String roleName;
 }

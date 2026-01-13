@@ -18,6 +18,8 @@ public class Task {
 
     private String description;
 
+    private Boolean active; 
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workflow_id", nullable = false)
     private Workflow workflow;
