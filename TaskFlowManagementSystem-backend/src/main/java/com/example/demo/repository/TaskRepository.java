@@ -5,10 +5,11 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.example.demo.model.entity.Task;
 
-import io.lettuce.core.dynamic.annotation.Param;
+
 
 public interface TaskRepository  extends JpaRepository<Task, Long>{
     // 查某使用者建立的任務

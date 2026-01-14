@@ -4,11 +4,12 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.example.demo.model.entity.Notification;
 import com.example.demo.model.entity.TaskAssignee;
 
-import io.lettuce.core.dynamic.annotation.Param;
+
 
 public interface NotificationRepository extends JpaRepository<Notification, Long>{
 	 // 查某任務所有被指派者

@@ -4,10 +4,11 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.example.demo.model.entity.TaskHistory;
 
-import io.lettuce.core.dynamic.annotation.Param;
+
 
 public interface TaskHistoryRepository extends JpaRepository<TaskHistory, Long> {
 	 @Query(value = "SELECT th.id AS th_id, th.timestamp, " +

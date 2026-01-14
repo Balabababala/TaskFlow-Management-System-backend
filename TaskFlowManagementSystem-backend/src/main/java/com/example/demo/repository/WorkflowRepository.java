@@ -5,10 +5,11 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.example.demo.model.entity.Workflow;
 
-import io.lettuce.core.dynamic.annotation.Param;
+
 
 public interface WorkflowRepository extends JpaRepository<Workflow, Long>{
 	 // 查某個流程模板的所有版本
