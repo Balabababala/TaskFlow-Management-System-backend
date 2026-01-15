@@ -32,8 +32,14 @@ public class WorkflowServiceImpl implements WorkflowService{
 	};
 	
 	public void deleteWorkflow(Long id) {
-		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("workflow not found"));
+		
+		if (!workflow.getActive()) {
+		    throw new IllegalStateException("workflow already deleted");
+		}
+		
 		workflow.setActive(false);
+		workflowRepository.save(workflow);
 	};
 	
 	public WorkflowDto findWorkflow(Long id) {
