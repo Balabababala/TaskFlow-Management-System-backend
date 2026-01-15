@@ -2,6 +2,7 @@ package com.example.demo.model.entity;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -20,8 +21,12 @@ public class Workflow {
     private Integer version;
 
     private Boolean active=true; 
+    
     @CreationTimestamp
     private LocalDateTime createdAt;
+    
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)

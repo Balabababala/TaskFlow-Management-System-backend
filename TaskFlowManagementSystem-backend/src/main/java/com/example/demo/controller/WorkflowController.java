@@ -53,13 +53,31 @@ public class WorkflowController {
 	    workflowService.createWorkflow(workflowDto);
 	    return ResponseEntity.ok(ApiResponse.success("創建成功", null));
 	}
+	
+	
+	
+	@PostMapping("/update")
+	public ResponseEntity<ApiResponse<Void>> updateWorkflow(@RequestBody WorkflowDto workflowDto){
+		 // 1️⃣ 取得 user
+        User user = userRepository.findById(workflowDto.getCreatedBy())
+                .orElseThrow(() -> new UserNotFoundException(workflowDto.getCreatedBy()));
+		
+		 // 👉 暫時版權限檢查（沒有 Spring Security）
+	    if (!"ADMIN".equals(user.getRole().getRoleName())) {
+	        throw new RoleNotMatchException("ADMIN");
+	    }
+	    
+	    workflowService.updateWorkflow(workflowDto);
+	    return ResponseEntity.ok(ApiResponse.success("更凱成功", null));
+	}
+	
 	///
 	///目前 測試 http://localhost:8080/api/workflow/delete
 	///Json
 	///{
 	///	    "id": 1,
-	///	    "name": "lose",
-	///	    "version": 1,
+	///	    "name": null,
+	///	    "version": null,
 	///	    "createdAt": null,
 	///	    "createdBy": 1          
 	///	}
@@ -79,5 +97,8 @@ public class WorkflowController {
 	    workflowService.deleteWorkflow(workflowDto.getId());
 	    return ResponseEntity.ok(ApiResponse.success("刪除成功", null));
 	}
+	
+	
+	
 
 }

@@ -21,6 +21,7 @@ public class WorkflowMapper {
 		  workflowDto.setName(workflow.getName());
 		  workflowDto.setVersion(workflow.getVersion());
 		  workflowDto.setCreatedAt(workflow.getCreatedAt());
+		  workflowDto.setUpdatedAt(workflow.getUpdatedAt());
 		  workflowDto.setCreatedBy(workflow.getCreatedBy().getId()); // 存 User id
 		  return workflowDto;
 	}
@@ -30,7 +31,6 @@ public class WorkflowMapper {
 		workflow.setId(workflowDto.getId());
 		workflow.setName(workflowDto.getName());
 		workflow.setVersion(workflowDto.getVersion());
-		workflow.setCreatedAt(workflowDto.getCreatedAt());
 		User user = userRepository.findById(workflowDto.getCreatedBy()).orElseThrow(() -> new RuntimeException("User not found"));
 		workflow.setCreatedBy(user);
 		

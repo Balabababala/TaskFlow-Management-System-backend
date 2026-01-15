@@ -6,7 +6,7 @@ import com.example.demo.model.dto.WorkflowDto;
 	public interface WorkflowService {
 		void createWorkflow(WorkflowDto workflowDto);
 		
-		void updateWorkflow(Long id,WorkflowDto workflowDto);
+		void updateWorkflow(WorkflowDto workflowDto);
 		
 		void deleteWorkflow(Long id);
 		

@@ -27,4 +27,6 @@ public interface WorkflowRepository extends JpaRepository<Workflow, Long>{
     nativeQuery = true)
     Object findWorkflowWithCreatorById(@Param("workflowId") Long workflowId);
 
+	boolean existsByNameAndVersion(String name, Integer version);
+
 }
