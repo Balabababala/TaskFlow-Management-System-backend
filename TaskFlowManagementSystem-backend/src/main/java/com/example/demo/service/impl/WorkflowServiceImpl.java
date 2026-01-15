@@ -84,11 +84,24 @@ public class WorkflowServiceImpl implements WorkflowService{
 		workflowRepository.save(workflow);
 	};
 	
+	public void restoreWorkflow(Long id) {
+		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("workflow not found"));
+		
+		if (workflow.getActive()) {
+		    throw new IllegalStateException("workflow already active");
+		}
+		// 等SpringSecure 補好 要加身分檢查
+		workflow.setActive(true);
+		workflowRepository.save(workflow);
+	};
+	
 	public WorkflowDto findWorkflow(Long id) {
 		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
 		return workflowMapper.entityToDto(workflow);
 		
 	};
+	
+	
 	
 	public List<WorkflowDto> findAllWorkflow(){
 		return workflowRepository.findAll().stream()

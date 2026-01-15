@@ -10,6 +10,8 @@ import com.example.demo.model.dto.WorkflowDto;
 		
 		void deleteWorkflow(Long id);
 		
+		void restoreWorkflow(Long id);
+		
 		WorkflowDto findWorkflow(Long id);
 		List<WorkflowDto> findAllWorkflow();
 

@@ -97,6 +97,31 @@ public class WorkflowController {
 	    workflowService.deleteWorkflow(workflowDto.getId());
 	    return ResponseEntity.ok(ApiResponse.success("刪除成功", null));
 	}
+	///
+		///目前 測試 http://localhost:8080/api/workflow/restore
+		///Json
+		///{
+		///	    "id": 1,
+		///	    "name": null,
+		///	    "version": null,
+		///	    "createdAt": null,
+		///	    "createdBy": 1          
+		///	}
+		///配合創建測 id 為刪除的目標
+	@PostMapping("/restore")
+	public ResponseEntity<ApiResponse<Void>> restoreWorkflow(@RequestBody WorkflowDto workflowDto){
+		 // 1️⃣ 取得 user
+       User user = userRepository.findById(workflowDto.getCreatedBy())
+               .orElseThrow(() -> new UserNotFoundException(workflowDto.getCreatedBy()));
+		
+		 // 👉 暫時版權限檢查（沒有 Spring Security）
+	    if (!"ADMIN".equals(user.getRole().getRoleName())) {
+	        throw new RoleNotMatchException("ADMIN");
+	    }
+	    
+	    workflowService.restoreWorkflow(workflowDto.getId());
+	    return ResponseEntity.ok(ApiResponse.success("回復成功", null));
+	}
 	
 	
 	
