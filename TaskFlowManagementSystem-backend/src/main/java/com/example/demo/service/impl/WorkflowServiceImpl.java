@@ -96,7 +96,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 	};
 	
 	public WorkflowDto findWorkflow(Long id) {
-		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("workflow not found"));
 		return workflowMapper.entityToDto(workflow);
 		
 	};

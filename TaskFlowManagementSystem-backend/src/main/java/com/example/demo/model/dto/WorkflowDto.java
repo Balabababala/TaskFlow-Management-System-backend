@@ -11,5 +11,5 @@ public class WorkflowDto {
 	    private Integer version;            // 版本號
 	    private LocalDateTime createdAt;    // 建立時間
 	    private LocalDateTime updatedAt;    // 建立時間
-	    private Long createdBy;             // 建立者 userId
+	    private Long createdBy;             // 建立者 userId 如果是前端給的 就是發請求的人
 }
