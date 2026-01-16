@@ -1,5 +1,19 @@
 package com.example.demo.service;
 
-public class UserService {
+import java.util.List;
 
+import com.example.demo.model.dto.UserDto;
+import com.example.demo.model.dto.WorkflowDto;
+
+public interface UserService {
+	 void createUser(UserDto UserDto);
+	
+	 void updateUser(UserDto UserDto);
+	
+	 void deleteUser(Long id);
+	
+	 void restoreUser(Long id);
+	
+	 WorkflowDto findUser(Long id);
+	 List<WorkflowDto> findAllUser();
 }

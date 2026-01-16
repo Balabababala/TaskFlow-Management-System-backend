@@ -23,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	                   "WHERE u.id = :userId",
 	           nativeQuery = true)
 	    Object findUserWithRoleById(@Param("userId") Long userId);
+	    
+	    boolean existsByUsername(String username);
+	    boolean existsByEmail(String Email);
 }
