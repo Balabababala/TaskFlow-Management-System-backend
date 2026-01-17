@@ -3,7 +3,6 @@ package com.example.demo.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
 
 import com.example.demo.model.dto.WorkflowDto;
 import com.example.demo.model.entity.Workflow;

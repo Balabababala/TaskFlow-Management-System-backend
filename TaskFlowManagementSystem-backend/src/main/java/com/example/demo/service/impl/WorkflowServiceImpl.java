@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.mapper.WorkflowMapper;
 import com.example.demo.model.dto.WorkflowDto;
 import com.example.demo.model.entity.Workflow;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.WorkflowRepository;
 import com.example.demo.service.WorkflowService;
 
@@ -19,6 +20,8 @@ public class WorkflowServiceImpl implements WorkflowService{
 	private WorkflowRepository workflowRepository;
 	@Autowired
 	private WorkflowMapper workflowMapper;
+	@Autowired
+	private UserRepository userRepository;
 	
 	public void createWorkflow(WorkflowDto workflowDto) {
 	        // 1. 基礎校驗
@@ -31,7 +34,8 @@ public class WorkflowServiceImpl implements WorkflowService{
 	        
 	        // 3. 轉換與儲存
 	        Workflow workflow = workflowMapper.toEntity(workflowDto);
-	        // TODO: workflow.setCreatedBy(currentUser);
+
+	        workflow.setCreatedBy(userRepository.findById(1L).orElseThrow());//記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改
 	        workflowRepository.save(workflow);
 	    }
 	
@@ -105,3 +109,29 @@ public class WorkflowServiceImpl implements WorkflowService{
         if (dto.getVersion() == null) throw new IllegalArgumentException("Version cannot be null");
     }
 }
+
+
+
+
+
+//SpringSecure 驗證相關記得改
+//exception 處裡記得改
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

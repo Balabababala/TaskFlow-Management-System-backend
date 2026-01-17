@@ -72,7 +72,7 @@ public class WorkflowController {
 	    }
 	    
 	    workflowService.updateWorkflow(workflowDto);
-	    return ResponseEntity.ok(ApiResponse.success("更凱成功", null));
+	    return ResponseEntity.ok(ApiResponse.success("更改成功", null));
 	}
 	
 
@@ -94,18 +94,11 @@ public class WorkflowController {
 		///	    "createdBy": 1          
 		///	}
 		///配合創建測 id 為刪除的目標
-	@PostMapping("/restore")
-	public ResponseEntity<ApiResponse<Void>> restoreWorkflow(@RequestBody WorkflowDto workflowDto){
-		 // 1️⃣ 取得 user
-       User user = userRepository.findById(workflowDto.getCreatedBy())
-               .orElseThrow(() -> new UserNotFoundException(workflowDto.getCreatedBy()));
-		
-		 // 👉 暫時版權限檢查（沒有 Spring Security）
-	    if (!"ADMIN".equals(user.getRole().getRoleName())) {
-	        throw new RoleNotMatchException("ADMIN");
-	    }
+		///
+	@PostMapping("/restore/{id}")
+	public ResponseEntity<ApiResponse<Void>> restoreWorkflow(@PathVariable Long id){
 	    
-	    workflowService.restoreWorkflow(workflowDto.getId());
+	    workflowService.restoreWorkflow(id);
 	    return ResponseEntity.ok(ApiResponse.success("回復成功", null));
 	}
 	
