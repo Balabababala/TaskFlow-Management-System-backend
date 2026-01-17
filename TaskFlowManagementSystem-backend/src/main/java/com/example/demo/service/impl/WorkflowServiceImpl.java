@@ -20,58 +20,48 @@ public class WorkflowServiceImpl implements WorkflowService{
 	@Autowired
 	private WorkflowMapper workflowMapper;
 	
-	public void createWorkflow(WorkflowDto workflowDto){
-		boolean exists = workflowRepository.existsByNameAndVersion(workflowDto.getName(), workflowDto.getVersion());
-		if (exists) {
-		    throw new IllegalArgumentException("Workflow name + version already exists");
-		}
-		
-	    if (workflowDto.getName() == null) {
-	        throw new IllegalArgumentException("WorkflowDto name cannot be null");
+	public void createWorkflow(WorkflowDto workflowDto) {
+	        // 1. 基礎校驗
+	        validateDto(workflowDto);
+
+	        // 2. 檢查重複
+	        if (workflowRepository.existsByNameAndVersion(workflowDto.getName(), workflowDto.getVersion())) {
+	            throw new IllegalArgumentException("Workflow name + version already exists");
+	        }
+	        
+	        // 3. 轉換與儲存
+	        Workflow workflow = workflowMapper.toEntity(workflowDto);
+	        // TODO: workflow.setCreatedBy(currentUser);
+	        workflowRepository.save(workflow);
 	    }
-	    if (workflowDto.getVersion() == null) {
-	        throw new IllegalArgumentException("WorkflowDto version cannot be null");
-	    }
-	    
-		Workflow workflow = workflowMapper.dtoToEntity(workflowDto);
-		// 等SpringSecure 補好 要加createBy 
-		workflowRepository.save(workflow);
-	};
 	
-	public void updateWorkflow(WorkflowDto workflowDto) {		
+	 public void updateWorkflow(WorkflowDto workflowDto) {
+	        if (workflowDto.getId() == null) {
+	            throw new IllegalArgumentException("WorkflowDto id cannot be null");
+	        }
+	        validateDto(workflowDto);
 
-		
-	    if (workflowDto.getId() == null) {
-	        throw new IllegalArgumentException("WorkflowDto id cannot be null");
-	    }
-	    if (workflowDto.getName() == null) {
-	        throw new IllegalArgumentException("WorkflowDto name cannot be null");
-	    }
-	    if (workflowDto.getVersion() == null) {
-	        throw new IllegalArgumentException("WorkflowDto Version cannot be null");
-	    }
-	    
-	    // 1️⃣ 先從 DB 拿出 workflow
-	    Workflow workflow = workflowRepository.findById(workflowDto.getId())
-	            .orElseThrow(() -> new RuntimeException("workflow not found"));
+	        // 1️⃣ 先從 DB 拿出現有的實體 (真身)
+	        Workflow existingWorkflow = workflowRepository.findById(workflowDto.getId())
+	                .orElseThrow(() -> new RuntimeException("workflow not found"));
 
-	    // 2️⃣ 檢查 name + version 是否重複（排除自己）
-	    boolean exists = workflowRepository.existsByNameAndVersion(workflowDto.getName(), workflowDto.getVersion());
-	    if (exists && (!workflow.getName().equals(workflowDto.getName()) || !workflow.getVersion().equals(workflowDto.getVersion()))) {
-	        throw new IllegalArgumentException("Workflow name + version already exists");
+	        // 2️⃣ 檢查重複（排除自己：如果名稱或版本變了，才需要查有沒有跟別人撞名）
+	        boolean nameChanged = !existingWorkflow.getName().equals(workflowDto.getName());
+	        boolean versionChanged = !existingWorkflow.getVersion().equals(workflowDto.getVersion());
+	        
+	        if (nameChanged || versionChanged) {
+	            if (workflowRepository.existsByNameAndVersion(workflowDto.getName(), workflowDto.getVersion())) {
+	                throw new IllegalArgumentException("Workflow name + version already exists");
+	            }
+	        }
+
+	        // 3️⃣ 使用 MapStruct 自動更新欄位
+	        // 只要你在 Mapper 有寫 ignore = true，這裡就不會蓋掉 createdAt / createdBy
+	        workflowMapper.updateEntity(workflowDto, existingWorkflow);
+
+	        // 4️⃣ 儲存
+	        workflowRepository.save(existingWorkflow);
 	    }
-
-	    // 3️⃣ 更新欄位
-	    workflow.setName(workflowDto.getName());
-	    workflow.setVersion(workflowDto.getVersion());
-	    // 其他欄位例如 createdBy、createdAt 不動
-	    // updatedAt Hibernate 自動更新
-
-	    // 4️⃣ 儲存
-	    workflowRepository.save(workflow);
-	    // 等SpringSecure 補好 要加createBy 
-	    
-	};
 	
 	public void deleteWorkflow(Long id) {
 		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("workflow not found"));
@@ -97,7 +87,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 	
 	public WorkflowDto findWorkflow(Long id) {
 		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("workflow not found"));
-		return workflowMapper.entityToDto(workflow);
+		return workflowMapper.toDto(workflow);
 		
 	};
 	
@@ -105,7 +95,13 @@ public class WorkflowServiceImpl implements WorkflowService{
 	
 	public List<WorkflowDto> findAllWorkflow(){
 		return workflowRepository.findAll().stream()
-		.map(workflowMapper::entityToDto)
+		.map(workflowMapper::toDto)
 		.collect(Collectors.toList());
 	};
+	
+	// 將重複的校驗邏輯抽出成私有方法
+    private void validateDto(WorkflowDto dto) {
+        if (dto.getName() == null) throw new IllegalArgumentException("Name cannot be null");
+        if (dto.getVersion() == null) throw new IllegalArgumentException("Version cannot be null");
+    }
 }

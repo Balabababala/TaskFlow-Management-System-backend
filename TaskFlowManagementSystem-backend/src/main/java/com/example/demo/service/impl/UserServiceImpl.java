@@ -44,22 +44,18 @@ public class UserServiceImpl implements UserService{
 	    User user = userRepository.findById(userDto.getId())
 	            .orElseThrow(() -> new RuntimeException("workflow not found"));
 
-	    // 2️⃣ 檢查 name + version 是否重複（排除自己）
-	    boolean exists = workflowRepository.existsByNameAndVersion(workflowDto.getName(), workflowDto.getVersion());
-	    if (exists && (!workflow.getName().equals(workflowDto.getName()) || !workflow.getVersion().equals(workflowDto.getVersion()))) {
-	        throw new IllegalArgumentException("Workflow name + version already exists");
-	    }
+	    // 2️⃣ 檢查 user 是否重複（排除自己）
+	    boolean exists = userRepository.existsByUsername(userDto.getUsername());
+		
+		if (exists) {
+		    throw new IllegalArgumentException("Username already exists");
+		}
 
 	    // 3️⃣ 更新欄位
-	    workflow.setName(workflowDto.getName());
-	    workflow.setVersion(workflowDto.getVersion());
-	    // 其他欄位例如 createdBy、createdAt 不動
-	    // updatedAt Hibernate 自動更新
 
 	    // 4️⃣ 儲存
-	    workflowRepository.save(workflow);
-	    // 等SpringSecure 補好 要加createBy 
-		User user = userMapper.dtoToEntity(UserDto);
+		userDtoRepository.save(user);
+
 		// 等SpringSecure 補好 AAA相關 
 		
 	}
