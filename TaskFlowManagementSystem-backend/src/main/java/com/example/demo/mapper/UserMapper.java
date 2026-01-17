@@ -23,13 +23,13 @@ public abstract class UserMapper {
 	 
 	 // --- DTO 轉 Entity (新增時使用) ---
 	 @Mapping(target = "id", ignore = true)        // 新增時 ID 由資料庫自動生成
-	 abstract  User toEntity(UserDto userDto);
+	 public abstract  User toEntity(UserDto userDto);
 
 	    
 	 // --- DTO 更新至現有的 Entity (更新時使用) ---
 	 @Mapping(target = "id", ignore = true)        // 防止 ID 被修改
 	 @Mapping(source = "roleId", target = "role") 
-	 abstract void updateEntity(UserDto userDto, @MappingTarget User user);
+	 public abstract void updateEntity(UserDto userDto, @MappingTarget User user);
 	 
 	// MapStruct 看到需要把 Integer 轉 Role 時，會自動呼叫此方法
 	protected Role mapIdToRole(Integer roleId) {

@@ -104,9 +104,9 @@ public class WorkflowServiceImpl implements WorkflowService{
 	};
 	
 	// 將重複的校驗邏輯抽出成私有方法
-    private void validateDto(WorkflowDto dto) {
-        if (dto.getName() == null) throw new IllegalArgumentException("Name cannot be null");
-        if (dto.getVersion() == null) throw new IllegalArgumentException("Version cannot be null");
+    private void validateDto(WorkflowDto workflowtoDto) {
+        if (workflowtoDto.getName() == null) throw new IllegalArgumentException("Name cannot be null");
+        if (workflowtoDto.getVersion() == null) throw new IllegalArgumentException("Version cannot be null");
     }
 }
 
