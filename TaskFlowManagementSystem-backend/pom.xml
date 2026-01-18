@@ -36,8 +36,18 @@
    			<artifactId>mysql-connector-j</artifactId>
     		<scope>runtime</scope>
 		</dependency>
-
-		<!-- 4. 工具類 -->
+		<!-- 4. Springsecure 驅動 (修正為新版名稱，不需寫版本號) -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<!-- 5. 加密相關 -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
+		
+		<!-- 6. 工具類 -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -54,8 +64,8 @@
 		    <artifactId>mapstruct</artifactId>
 		    <version>1.5.5.Final</version>
 		</dependency>
-
-		<!-- 5. 測試核心  -->
+		
+		<!-- 76. 測試核心  -->
 		<dependency>
     		<groupId>org.springframework.boot</groupId>
     		<artifactId>spring-boot-starter-test</artifactId>
