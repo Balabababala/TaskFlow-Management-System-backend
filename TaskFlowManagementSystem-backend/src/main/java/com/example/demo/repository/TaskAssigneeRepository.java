@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,5 +30,5 @@ public interface TaskAssigneeRepository extends JpaRepository<TaskAssignee, Long
             "JOIN status s ON ta.status_id = s.id " +
             "WHERE t.id = :taskId",
     nativeQuery = true)
-    List<Object[]> findTaskAssigneeWithRelations(@Param("taskId") Long taskId);
+    List<Optional<TaskAssignee>> findTaskAssigneeWithRelations(@Param("taskId") Long taskId);
 }

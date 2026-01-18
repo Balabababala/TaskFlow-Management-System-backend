@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,5 +22,5 @@ public interface StatusRepository extends JpaRepository<Status, Long>{
                    "JOIN workflow w ON s.workflow_id = w.id " +
                    "WHERE s.workflow_id = :workflowId",
            nativeQuery = true)
-    List<Object[]> findStatusWithMasterAndWorkflowNative(@Param("workflowId") Long workflowId);
+    List<Optional<Status>> findStatusWithMasterAndWorkflowNative(@Param("workflowId") Long workflowId);
 }

@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,5 +25,5 @@ public interface TaskHistoryRepository extends JpaRepository<TaskHistory, Long> 
              "WHERE t.id = :taskId " +
              "ORDER BY th.timestamp ASC",
      nativeQuery = true)
-	 List<Object[]> findTaskHistoryWithRelations(@Param("taskId") Long taskId);
+	 List<Optional<TaskHistory>> findTaskHistoryWithRelations(@Param("taskId") Long taskId);
 }

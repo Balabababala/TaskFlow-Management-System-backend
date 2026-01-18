@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,5 +28,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             "LEFT JOIN task t ON n.task_id = t.id " +
             "WHERE n.user_id = :userId AND n.read_flag = false",
     nativeQuery = true)
-    List<Object[]> findUnreadNotificationWithRelations(@Param("userId") Integer userId);
+    List<Optional<Notification>> findUnreadNotificationWithRelations(@Param("userId") Integer userId);
 }

@@ -16,13 +16,11 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	    Optional<User> findByEmail(String email);
 	    
 	 // 查使用者及其角色
-	    @Query(value = "SELECT u.id AS user_id, u.username, u.email, u.password, " +
-	                   "r.id AS role_id, r.role_name " +
-	                   "FROM users u " +
-	                   "JOIN role r ON u.role_id = r.id " +
-	                   "WHERE u.id = :userId",
-	           nativeQuery = true)
-	    Object findUserWithRoleById(@Param("userId") Long userId);
+	    @Query(value = "SELECT * FROM users u " +
+	               "LEFT JOIN role r ON u.role_id = r.id " +
+	               "WHERE u.username = :username", 
+	       nativeQuery = true)
+	    Optional<User> findByUsernameWithRoleNative(@Param("username") String username);
 	    
 	    boolean existsByUsername(String username);
 	    boolean existsByEmail(String Email);

@@ -17,7 +17,8 @@ public abstract class UserMapper {
 	private RoleRepository roleRepository;
 	
 	
-	 @Mapping(source = "role.id", target = "roleId")
+	@Mapping(source = "role.id", target = "roleId")
+	@Mapping(source = "role.roleName", target = "roleName") 
 	public abstract UserDto toDto(User user);
 	
 	 

@@ -1,7 +1,7 @@
 package com.example.demo.repository;
 
 import java.util.List;
-
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,7 +25,7 @@ public interface WorkflowRepository extends JpaRepository<Workflow, Long>{
             "JOIN users u ON w.created_by = u.id " +
             "WHERE w.id = :workflowId",
     nativeQuery = true)
-    Object findWorkflowWithCreatorById(@Param("workflowId") Long workflowId);
+    Optional<Workflow> findWorkflowWithCreatorById(@Param("workflowId") Long workflowId);
 
 	boolean existsByNameAndVersion(String name, Integer version);
 
