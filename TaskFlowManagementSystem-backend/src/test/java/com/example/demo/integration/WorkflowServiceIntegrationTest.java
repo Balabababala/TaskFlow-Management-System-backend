@@ -1,4 +1,4 @@
-package com.example.demo.service.impl;
+package com.example.demo.integration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional  // 每次測試後會自動 rollback，不影響資料庫
-public class WorkflowServiceImplTest {
+public class WorkflowServiceIntegrationTest {
 
     @Autowired
     private WorkflowService workflowService;
