@@ -18,7 +18,7 @@ public abstract class UserMapper {
 	
 	
 	 @Mapping(source = "role.id", target = "roleId")
-	 abstract UserDto toDto(User user);
+	public abstract UserDto toDto(User user);
 	
 	 
 	 // --- DTO 轉 Entity (新增時使用) ---

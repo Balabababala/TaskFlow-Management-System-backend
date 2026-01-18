@@ -14,6 +14,6 @@ public interface UserService {
 	
 	 void restoreUser(Long id);
 	
-	 WorkflowDto findUser(Long id);
-	 List<WorkflowDto> findAllUser();
+	 UserDto findUser(Long id);
+	 List<UserDto> findAllUser();
 }

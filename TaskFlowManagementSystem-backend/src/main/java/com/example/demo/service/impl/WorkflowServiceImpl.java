@@ -13,6 +13,9 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.WorkflowRepository;
 import com.example.demo.service.WorkflowService;
 
+import jakarta.transaction.Transactional;
+
+@Transactional
 @Service
 public class WorkflowServiceImpl implements WorkflowService{
 	
