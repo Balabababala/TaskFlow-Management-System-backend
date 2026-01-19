@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	    Optional<User> findByEmail(String email);
 	    
 	 // 查使用者及其角色
-	    @Query(value = "SELECT * FROM users u " +
+	    @Query(value = "SELECT u.* FROM user u " +
 	               "LEFT JOIN role r ON u.role_id = r.id " +
 	               "WHERE u.username = :username", 
 	       nativeQuery = true)
