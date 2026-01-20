@@ -17,7 +17,7 @@ public class Status {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "master_id", nullable = false)
-    private StatusMaster master;
+    private StatusMaster statusMaster;
 
     @Column(columnDefinition = "json")
     private String allowedTransitions;

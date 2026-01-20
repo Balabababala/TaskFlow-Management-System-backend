@@ -4,13 +4,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.exception.RoleNotMatchException;
 import com.example.demo.mapper.WorkflowMapper;
 import com.example.demo.model.dto.WorkflowDto;
 import com.example.demo.model.entity.Workflow;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.WorkflowRepository;
+import com.example.demo.secure.CustomUserDetails;
 import com.example.demo.service.WorkflowService;
 
 import jakarta.transaction.Transactional;
@@ -26,19 +30,27 @@ public class WorkflowServiceImpl implements WorkflowService{
 	@Autowired
 	private UserRepository userRepository;
 	
-	public void createWorkflow(WorkflowDto workflowDto) {
+	
+	public void createWorkflow(CustomUserDetails customUserDetails,WorkflowDto workflowDto) {
 	        // 1. 基礎校驗
 	        validateDto(workflowDto);
 
-	        // 2. 檢查重複
+	        // 2.檢查權限
+	        boolean isAdmin = customUserDetails.getAuthorities().stream()
+	                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+	        if (!isAdmin) {
+	            throw new RoleNotMatchException("admin");
+	        }
+	        
+	        // 3. 檢查重複
 	        if (workflowRepository.existsByNameAndVersion(workflowDto.getName(), workflowDto.getVersion())) {
 	            throw new IllegalArgumentException("Workflow name + version already exists");
 	        }
 	        
-	        // 3. 轉換與儲存
+	        // 4. 轉換與儲存
 	        Workflow workflow = workflowMapper.toEntity(workflowDto);
 
-	        workflow.setCreatedBy(userRepository.findById(1L).orElseThrow());//記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改記的改
+	        workflow.setCreatedBy(customUserDetails.getUser());
 	        workflowRepository.save(workflow);
 	    }
 	

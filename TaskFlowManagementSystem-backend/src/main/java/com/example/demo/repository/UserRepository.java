@@ -2,25 +2,19 @@ package com.example.demo.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import com.example.demo.model.entity.User;
 
 
 
 public interface UserRepository extends JpaRepository<User, Long>{
+		@EntityGraph(attributePaths = {"role"})
 	    Optional<User> findByUsername(String username);
+	    @EntityGraph(attributePaths = {"role"})
 	    Optional<User> findById(Long id);
+	    @EntityGraph(attributePaths = {"role"})
 	    Optional<User> findByEmail(String email);
-	    
-	 // 查使用者及其角色
-	    @Query(value = "SELECT u.* FROM user u " +
-	               "LEFT JOIN role r ON u.role_id = r.id " +
-	               "WHERE u.username = :username", 
-	       nativeQuery = true)
-	    Optional<User> findByUsernameWithRoleNative(@Param("username") String username);
 	    
 	    boolean existsByUsername(String username);
 	    boolean existsByEmail(String Email);

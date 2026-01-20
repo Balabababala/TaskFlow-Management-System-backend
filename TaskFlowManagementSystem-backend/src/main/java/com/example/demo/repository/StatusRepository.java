@@ -3,6 +3,7 @@ package com.example.demo.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,14 +14,17 @@ import com.example.demo.model.entity.Status;
 
 
 public interface StatusRepository extends JpaRepository<Status, Long>{
-	  // 查 workflow 下所有狀態 + master + workflow
-    @Query(value = "SELECT s.id AS status_id, s.allowed_transitions, " +
-                   "sm.id AS master_id, sm.code AS master_code, sm.label AS master_label, " +
-                   "w.id AS workflow_id, w.name AS workflow_name, w.version AS workflow_version " +
-                   "FROM status s " +
-                   "JOIN status_master sm ON s.master_id = sm.id " +
-                   "JOIN workflow w ON s.workflow_id = w.id " +
-                   "WHERE s.workflow_id = :workflowId",
-           nativeQuery = true)
-    List<Optional<Status>> findStatusWithMasterAndWorkflowNative(@Param("workflowId") Long workflowId);
+	  // 查 workflow 下所有狀態 + master + workflow 等同下面
+//    @Query(value = "SELECT s.id AS status_id, s.allowed_transitions, " +
+//                   "sm.id AS master_id, sm.code AS master_code, sm.label AS master_label, " +
+//                   "w.id AS workflow_id, w.name AS workflow_name, w.version AS workflow_version " +
+//                   "FROM status s " +
+//                   "JOIN status_master sm ON s.master_id = sm.id " +
+//                   "JOIN workflow w ON s.workflow_id = w.id " +
+//                   "WHERE s.workflow_id = :workflowId",
+//           nativeQuery = true)
+//    List<Optional<Status>> findStatusWithMasterAndWorkflowNative(@Param("workflowId") Long workflowId);
+    
+	@EntityGraph(attributePaths = {"statusMaster", "workflow"})
+    List<Status> findByWorkflowId(Long workflowId);
 }

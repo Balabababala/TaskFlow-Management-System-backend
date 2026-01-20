@@ -6,8 +6,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,87 +25,67 @@ import java.security.PublicKey;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
-
     @Autowired
     private KeyInitializer keyInitializer;
     
     @Autowired
     private UserRepository userRepository;
 
-  
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, 
                                     HttpServletResponse response, 
                                     FilterChain filterChain)
             throws ServletException, IOException {
-        logger.debug("開始處理 JWT 過濾器，請求路徑: {}", request.getRequestURI());
+        
         String authHeader = request.getHeader("Authorization");
-        logger.debug("收到 Authorization 頭: {}", authHeader != null ? authHeader : "null");
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            logger.debug("無效的 Authorization 頭，繼續過濾器鏈");
+        // 1. 檢查 Header 格式。如果為空、不是 Bearer 開頭、或是 "Bearer null"，直接放行
+        if (authHeader == null || !authHeader.startsWith("Bearer ") || authHeader.length() <= 11) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authHeader.substring(7);
-        logger.debug("解析的 JWT token: {}", token);
 
         try {
             if (keyInitializer.getKeyPair() == null) {
-                logger.error("KeyInitializer.keyPair 為 null");
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("伺服器錯誤：金鑰對未初始化");
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "金鑰未初始化");
                 return;
             }
-         // 假設 keyInitializer 是被注入的 Bean
+
             PublicKey publicKey = keyInitializer.getKeyPair().getPublic();
 
             Claims claims = Jwts.parser()
-                                .verifyWith(publicKey) // 直接傳入 PublicKey 物件
+                                .verifyWith(publicKey)
                                 .build()
                                 .parseSignedClaims(token)
                                 .getPayload();
 
-            String userIdStr  = claims.getSubject();
-            Long userId = Long.parseLong(userIdStr);
-
+            String userIdStr = claims.getSubject();
 
             if (userIdStr != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                Long userId = Long.parseLong(userIdStr);
                 User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new TaskflowException("用戶不存在: " + userId));
-                logger.debug("找到用戶: {}", user.getUsername());
+                        .orElseThrow(() -> new TaskflowException("用戶不存在"));
 
                 CustomUserDetails userDetails = new CustomUserDetails(user);
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                logger.debug("設置 SecurityContext 認證: {}", userId);
             }
             filterChain.doFilter(request, response);
-        } catch (io.jsonwebtoken.ExpiredJwtException e) {
-            logger.error("JWT 已過期: {}", e.getMessage());
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("JWT 已過期");
-        } catch (io.jsonwebtoken.MalformedJwtException e) {
-            logger.error("JWT 格式錯誤: {}", e.getMessage());
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("JWT 格式無效");
-        } catch (io.jsonwebtoken.JwtException e) {
-            logger.error("JWT 驗證失敗: {}", e.getMessage(), e);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("無效的 JWT Token: " + e.getMessage());
-        } catch (TaskflowException e) {
-            logger.error("用戶查詢失敗: {}", e.getMessage());
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("用戶不存在: " + e.getMessage());
+
         } catch (Exception e) {
-            logger.error("未預期的錯誤在 JWT 過濾器: {}", e.getMessage(), e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("伺服器錯誤: " + e.getMessage());
+            // 2. 針對 Login 請求路徑，即使 JWT 解析失敗也應該放行，交給 SecurityConfig 設定的許可邏輯
+            if (request.getRequestURI().contains("/api/auth/")) {
+                filterChain.doFilter(request, response);
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("驗證失敗：" + e.getMessage());
+            }
         }
     }
 }

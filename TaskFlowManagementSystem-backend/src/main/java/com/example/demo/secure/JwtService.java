@@ -53,38 +53,38 @@ public class JwtService {
         claims.put("active", dto.getActive()); 
         return claims;
     }
-    
-    /**
-     * 生成極短效的驗證碼 Token (效期 1 分鐘)
-     */
-    public String generateAuthJwtToken(String code) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 60 * 1000); // 1 分鐘
-        
-        PrivateKey privateKey = keyInitializer.getKeyPair().getPrivate();
-
-        return Jwts.builder()
-                .subject("captcha")
-                .claim("code", code)
-                .issuedAt(now)
-                .expiration(expiryDate)
-                .signWith(privateKey)
-                .compact();
-    }
-    
-    /**
-     * 解析驗證碼 Token
-     */
-    public String parseCaptchaJwtToken(String token) {
-        PublicKey publicKey = keyInitializer.getKeyPair().getPublic();
-
-        // JJWT 0.12+ 新版 Parser 寫法
-        Claims claims = Jwts.parser()
-                .verifyWith(publicKey) // 替換舊版的 setSigningKey
-                .build()
-                .parseSignedClaims(token) // 替換舊版的 parseClaimsJws
-                .getPayload(); // 替換舊版的 getBody
-
-        return claims.get("code", String.class);
-    }
+    //以下暫時用不到 驗證碼的
+//    /**
+//     * 生成極短效的驗證碼 Token (效期 1 分鐘)
+//     */
+//    public String generateAuthJwtToken(String code) {
+//        Date now = new Date();
+//        Date expiryDate = new Date(now.getTime() + 60 * 1000); // 1 分鐘
+//        
+//        PrivateKey privateKey = keyInitializer.getKeyPair().getPrivate();
+//
+//        return Jwts.builder()
+//                .subject("captcha")
+//                .claim("code", code)
+//                .issuedAt(now)
+//                .expiration(expiryDate)
+//                .signWith(privateKey)
+//                .compact();
+//    }
+//    
+//    /**
+//     * 解析驗證碼 Token
+//     */
+//    public String parseCaptchaJwtToken(String token) {
+//        PublicKey publicKey = keyInitializer.getKeyPair().getPublic();
+//
+//        // JJWT 0.12+ 新版 Parser 寫法
+//        Claims claims = Jwts.parser()
+//                .verifyWith(publicKey) // 替換舊版的 setSigningKey
+//                .build()
+//                .parseSignedClaims(token) // 替換舊版的 parseClaimsJws
+//                .getPayload(); // 替換舊版的 getBody
+//
+//        return claims.get("code", String.class);
+//    }
 }

@@ -10,6 +10,7 @@ import com.example.demo.model.entity.Role;
 import com.example.demo.model.entity.User;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.secure.CustomUserDetails;
 import com.example.demo.service.WorkflowService;
 
 import org.junit.jupiter.api.Test;
@@ -56,7 +57,8 @@ public class WorkflowServiceIntegrationTest {
         dto.setCreatedBy(user.getId());  // 用剛存的 User ID
 
         // 4️⃣ 建立 Workflow
-        workflowService.createWorkflow(dto);
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+        workflowService.createWorkflow(userDetails,dto);
 
         // 5️⃣ 取得所有 Workflow
         List<WorkflowDto> allWorkflows = workflowService.findAllWorkflow();

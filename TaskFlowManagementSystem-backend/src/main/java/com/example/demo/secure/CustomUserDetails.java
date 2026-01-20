@@ -23,7 +23,10 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getRoleName()));
+        // 資料庫存 "ADMIN"，取出時再動態加上 "ROLE_"
+        return Collections.singletonList(
+            new SimpleGrantedAuthority("ROLE_" + user.getRole().getRoleName())
+        );
     }
     
     @Override

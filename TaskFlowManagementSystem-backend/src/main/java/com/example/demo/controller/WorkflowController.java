@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import com.example.demo.model.dto.ApiResponse;
 import com.example.demo.model.dto.WorkflowDto;
 import com.example.demo.model.entity.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.secure.CustomUserDetails;
 import com.example.demo.service.WorkflowService;
 
 @RestController
@@ -44,18 +46,11 @@ public class WorkflowController {
 	///
 
 	@PostMapping("/create")
-	public ResponseEntity<ApiResponse<Void>> createWorkflow(@RequestBody WorkflowDto workflowDto){
-		 // 1️⃣ 取得 user
-        User user = userRepository.findById(workflowDto.getCreatedBy())
-                .orElseThrow(() -> new UserNotFoundException(workflowDto.getCreatedBy()));
-		
-		 // 👉 暫時版權限檢查（沒有 Spring Security）
-	    if (!"ADMIN".equals(user.getRole().getRoleName())) {
-	        throw new RoleNotMatchException("ADMIN");
-	    }
+	public ResponseEntity<ApiResponse<Void>> createWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails , @RequestBody WorkflowDto workflowDto){
 	    
-	    workflowService.createWorkflow(workflowDto);
+	    workflowService.createWorkflow(customUserDetails,workflowDto);
 	    return ResponseEntity.ok(ApiResponse.success("創建成功", null));
+
 	}
 	
 	
