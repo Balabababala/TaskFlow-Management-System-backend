@@ -32,9 +32,13 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()      // 登入註冊開放
-                .requestMatchers("/api/admin/**").hasRole("ADMIN") // 限制管理員
-                .anyRequest().authenticated()                      // 其他需認證
+            		// 同時顯式指定「無斜線」與「有斜線+子路徑」
+            		// 確保這裡的權限檢查是最優先的
+            	    .requestMatchers("/api/admin/**").hasRole("ADMIN")
+            	    .requestMatchers("/api/auth/**").permitAll()
+            	    // 其餘所有 /api 開頭的請求
+            	    .requestMatchers("/api/**").permitAll()
+            	    .anyRequest().authenticated()
             )
             // 2. 在 UsernamePasswordAuthenticationFilter 之前加入 JWT 濾波器
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

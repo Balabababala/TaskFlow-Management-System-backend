@@ -38,6 +38,26 @@ public class GlobalExceptionHandler {
 //                .body(ApiResponse.error("權限不足，無法存取該資源"));
 //    }
 
+    
+    // 處理資料庫唯一約束衝突（如：名稱+版本重複）就是資料庫設 unique 然後有重複 就跑這 
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolation(org.springframework.dao.DataIntegrityViolationException ex) {
+        // 獲取最具體的錯誤訊息
+        String msg = ex.getMostSpecificCause().getMessage();
+        
+        // 根據你資料庫設定的約束名稱進行判斷 (uc_workflow_name_version)
+        if (msg != null && msg.contains("uc_workflow_name_version")) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT) // 409 Conflict
+                    .body(ApiResponse.error("該名稱與版本的組合已存在"));
+        }
+        
+        // 其他資料完整性錯誤（如：外鍵約束、欄位長度過長）
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST) // 400
+                .body(ApiResponse.error("資料存儲異常：請檢查數據是否重複或符合規範"));
+    }
+    
     //  兜底處理：處理所有未預期的系統錯誤
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleOther(Exception ex) {
@@ -48,6 +68,6 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("內部伺服器錯誤"));
     }
 	
-	
+ 
 }
 

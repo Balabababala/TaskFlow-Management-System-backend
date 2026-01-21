@@ -56,26 +56,19 @@ public class WorkflowController {
 	
 	
 	@PostMapping("/update")
-	public ResponseEntity<ApiResponse<Void>> updateWorkflow(@RequestBody WorkflowDto workflowDto){
-		 // 1️⃣ 取得 user
-        User user = userRepository.findById(workflowDto.getCreatedBy())
-                .orElseThrow(() -> new UserNotFoundException(workflowDto.getCreatedBy()));
-		
-		 // 👉 暫時版權限檢查（沒有 Spring Security）
-	    if (!"ADMIN".equals(user.getRole().getRoleName())) {
-	        throw new RoleNotMatchException("ADMIN");
-	    }
+	public ResponseEntity<ApiResponse<Void>> updateWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails ,@RequestBody WorkflowDto workflowDto){
+
 	    
-	    workflowService.updateWorkflow(workflowDto);
+	    workflowService.updateWorkflow(customUserDetails,workflowDto);
 	    return ResponseEntity.ok(ApiResponse.success("更改成功", null));
 	}
 	
 
 	@DeleteMapping("/delete/{id}")
 	
-	public ResponseEntity<ApiResponse<Void>> deleteWorkflow(@PathVariable Long id){
+	public ResponseEntity<ApiResponse<Void>> deleteWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long id){
 	    
-	    workflowService.deleteWorkflow(id);
+	    workflowService.deleteWorkflow(customUserDetails ,id);
 	    return ResponseEntity.ok(ApiResponse.success("刪除成功", null));
 	}
 	///
@@ -91,9 +84,9 @@ public class WorkflowController {
 		///配合創建測 id 為刪除的目標
 		///
 	@PostMapping("/restore/{id}")
-	public ResponseEntity<ApiResponse<Void>> restoreWorkflow(@PathVariable Long id){
+	public ResponseEntity<ApiResponse<Void>> restoreWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable Long id){
 	    
-	    workflowService.restoreWorkflow(id);
+	    workflowService.restoreWorkflow(customUserDetails ,id);
 	    return ResponseEntity.ok(ApiResponse.success("回復成功", null));
 	}
 	
@@ -106,7 +99,6 @@ public class WorkflowController {
 	public ResponseEntity<ApiResponse<List<WorkflowDto>>> searchAllWorkflow(){
 	    return ResponseEntity.ok(ApiResponse.success("查詢成功", workflowService.findAllWorkflow()));
 	}
-	
 	
 	
 

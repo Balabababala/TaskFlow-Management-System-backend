@@ -5,10 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import com.example.demo.model.entity.Status;
 import com.example.demo.model.entity.Task;
 
 
@@ -32,7 +29,7 @@ public interface TaskRepository  extends JpaRepository<Task, Long>{
 //                   "WHERE t.id = :taskId",
 //           nativeQuery = true)
 //    Optional<Task> findTaskWithAllRelations(@Param("taskId") Long taskId);
-    
+    @Override
     @EntityGraph(attributePaths = {"status", "owner", "workflow"})
     Optional<Task> findById(Long id);
 }

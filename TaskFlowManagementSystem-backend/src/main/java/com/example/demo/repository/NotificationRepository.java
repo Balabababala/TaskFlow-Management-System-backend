@@ -30,6 +30,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 //            "WHERE n.user_id = :userId AND n.read_flag = false",
 //    nativeQuery = true)
 //    List<Optional<Notification>> findUnreadNotificationWithRelations(@Param("userId") Integer userId);
+    
     @EntityGraph(attributePaths = {"user", "task"})
     List<Notification> findByUserIdAndReadFlagFalse(Long userId);
 }

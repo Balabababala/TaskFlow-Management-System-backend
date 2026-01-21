@@ -75,17 +75,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
+            System.out.println("Filter 正在處理路徑: " + request.getRequestURI());
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            // 2. 針對 Login 請求路徑，即使 JWT 解析失敗也應該放行，交給 SecurityConfig 設定的許可邏輯
-            if (request.getRequestURI().contains("/api/auth/")) {
-                filterChain.doFilter(request, response);
-            } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().write("驗證失敗：" + e.getMessage());
+           
+        	SecurityContextHolder.clearContext();
+       	 	filterChain.doFilter(request, response);
             }
         }
-    }
+    
 }
