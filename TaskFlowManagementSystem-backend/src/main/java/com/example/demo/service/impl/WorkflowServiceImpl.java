@@ -69,7 +69,7 @@ public class WorkflowServiceImpl implements WorkflowService{
         Long createByid =existingWorkflow.getCreatedBy().getId();
         boolean isYours= (yourId ==createByid);
         if (!isYours) {
-            throw new UserNotMatchException(yourId+" is not match "+createByid);
+            throw new UserNotMatchException(yourId,createByid);
         }
         
         // 3. 檢查重複（排除自己：如果名稱或版本變了，才需要查有沒有跟別人撞名） SQL 會擋
@@ -96,7 +96,7 @@ public class WorkflowServiceImpl implements WorkflowService{
         Long createByid =workflow.getCreatedBy().getId();
         boolean isYours= (yourId ==createByid);
         if (!isYours) {
-            throw new UserNotMatchException(yourId+" is not match "+createByid);
+            throw new UserNotMatchException(yourId,createByid);
         }
 		
 		workflow.setActive(false);
@@ -116,7 +116,7 @@ public class WorkflowServiceImpl implements WorkflowService{
         Long createByid =workflow.getCreatedBy().getId();
         boolean isYours= (yourId ==createByid);
         if (!isYours) {
-            throw new UserNotMatchException(yourId+" is not match "+createByid);
+            throw new UserNotMatchException(yourId,createByid);
         }
 		workflow.setActive(true);
 		workflowRepository.save(workflow);

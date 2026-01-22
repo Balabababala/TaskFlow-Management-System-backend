@@ -1,8 +1,8 @@
 package com.example.demo.exception;
 
-public class UserNotMatchException extends TaskflowException {
+public class UserNotMatchException extends UserException {
 
-    public UserNotMatchException(String id) {
-        super("User not match: " + id);
+    public UserNotMatchException(Long yourId ,Long id) {
+        super(yourId+" is not match "+ id);
     }
 }
