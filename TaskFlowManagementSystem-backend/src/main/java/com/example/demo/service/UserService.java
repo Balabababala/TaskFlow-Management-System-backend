@@ -6,9 +6,9 @@ import com.example.demo.model.dto.UserDto;
 import com.example.demo.model.dto.WorkflowDto;
 
 public interface UserService {
-	 void createUser(UserDto UserDto);
+	 void createUser(UserDto userDto);
 	
-	 void updateUser(UserDto UserDto);
+	 void updateUser(UserDto userDto);
 	
 	 void deleteUser(Long id);
 	
