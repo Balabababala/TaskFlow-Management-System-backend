@@ -11,7 +11,7 @@ public class StatusMasterDto {
 	private String code;
 	private String label;
 	private String description;
-	private User createdBy;
-	private User updatedBy;
+	private String createdBy;//fullName
+	private String updatedBy;//fullName
 	private Boolean active;
 }

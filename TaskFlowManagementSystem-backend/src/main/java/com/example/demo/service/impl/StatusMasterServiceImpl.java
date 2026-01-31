@@ -38,30 +38,35 @@ public class StatusMasterServiceImpl implements StatusMasterService {
 	@Override
 	public void createStatusMaster(CustomUserDetails customUserDetails,StatusMasterDto statusMasterDto) {
 		//1.驗證基本
-        if (statusMasterDto.getCode() == null) throw new IllegalArgumentException("Code cannot be null");
 		validateDto(statusMasterDto);
+		if (statusMasterDto.getCode() == null) throw new IllegalArgumentException("Code cannot be null");
 		//2.驗證身分 並丟到 Dto (更新資料用)
 		Long isYourId=customUserDetails.getUser().getId();
 		User isYou=userRepository.findById(isYourId).orElseThrow(()-> new UserNotFoundException(isYourId));
-		statusMasterDto.setCreatedBy(isYou);
-		statusMasterDto.setUpdatedBy(isYou);
+
 		statusMasterDto.setActive(true);
 		//3.存入(SQL 有規範 這就不用擋了)
-		statusMasterRepository.save(statusMasterMapper.toEntity(statusMasterDto));
+		
+		StatusMaster statusMasterForSave = statusMasterMapper.toEntity(statusMasterDto);
+		statusMasterForSave.setCreatedBy(isYou);
+		statusMasterForSave.setUpdatedBy(isYou);
+		statusMasterRepository.save(statusMasterForSave);
 	}
 
 	@Override
 	public void updateStatusMaster(CustomUserDetails customUserDetails,StatusMasterDto statusMasterDto) {
 		//1.驗證基本
 		validateDto(statusMasterDto);
+		if (statusMasterDto.getId() == null) throw new IllegalArgumentException("Id cannot be null");
 		//2.驗證身分 + 找資料
 		Long isYourId=customUserDetails.getUser().getId();
 		User isYou=userRepository.findById(isYourId).orElseThrow(()-> new UserNotFoundException(isYourId));
 		Long statusMasterId=statusMasterDto.getId();
 		StatusMaster existingStatusMaster = statusMasterRepository.findById(statusMasterId).orElseThrow(()-> new StatusMasterNotFoundException(statusMasterId) );
-		statusMasterDto.setUpdatedBy(isYou);
+
 		//3.存入(SQL 有規範 這就不用擋了)
 		statusMasterMapper.updateEntity(statusMasterDto,existingStatusMaster);
+		existingStatusMaster.setUpdatedBy(isYou);
 		statusMasterRepository.save(existingStatusMaster);	
 	}
 
@@ -102,7 +107,7 @@ public class StatusMasterServiceImpl implements StatusMasterService {
 
 	@Override
 	public StatusMasterDto searchStatusMaster(Long id) {
-		return statusMasterMapper.toDto(statusMasterRepository.findByIdAndActiveIsTrue(id).orElseThrow(()-> new StatusMasterNotFoundException(id)));
+		return statusMasterMapper.toDto(statusMasterRepository.findByIdAndActiveTrue(id).orElseThrow(()-> new StatusMasterNotFoundException(id)));
 	}
 	
 	
@@ -121,9 +126,9 @@ public class StatusMasterServiceImpl implements StatusMasterService {
 	
 	// 將重複的校驗邏輯抽出成私有方法
     private void validateDto(StatusMasterDto statusMasterDto) {
-
         if (statusMasterDto.getDescription() == null) throw new IllegalArgumentException("Description cannot be null");
         if (statusMasterDto.getLabel() == null) throw new IllegalArgumentException("Label cannot be null");
+        
     }
 
 }

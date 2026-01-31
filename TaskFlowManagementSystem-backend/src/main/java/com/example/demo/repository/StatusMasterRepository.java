@@ -24,7 +24,7 @@ public interface StatusMasterRepository extends JpaRepository<StatusMaster, Long
 	List<StatusMaster> findByActiveTrue();
 
 	@EntityGraph(attributePaths = {"createdBy","updatedBy"})
-	Optional<StatusMaster> findByIdAndActiveIsTrue(Long id);
+	Optional<StatusMaster> findByIdAndActiveTrue(Long id);
 	
 	@Override
     @EntityGraph(attributePaths = {"createdBy","updatedBy"})

@@ -27,11 +27,11 @@ public class StatusMasterController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<ApiResponse<StatusMasterDto>> searchStatusMaster(@PathVariable Long id){
-	    return ResponseEntity.ok(ApiResponse.success("查詢成功", statusMasterService.searchStatusMasterAdminVer(id)));
+	    return ResponseEntity.ok(ApiResponse.success("查詢成功", statusMasterService.searchStatusMaster(id)));
 	}
 	
 	@GetMapping("/")
 	public ResponseEntity<ApiResponse<List<StatusMasterDto>>> searchAllStatusMaster(){
-	    return ResponseEntity.ok(ApiResponse.success("查詢成功", statusMasterService.searchAllStatusMasterAdminVer()));
+	    return ResponseEntity.ok(ApiResponse.success("查詢成功", statusMasterService.searchAllStatusMaster()));
 	}
 }
