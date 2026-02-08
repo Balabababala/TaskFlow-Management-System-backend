@@ -18,6 +18,7 @@ import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.mapper.WorkflowMapper;
 import com.example.demo.model.dto.ApiResponse;
 import com.example.demo.model.dto.WorkflowDto;
+import com.example.demo.model.dto.WorkflowRequest;
 import com.example.demo.model.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.secure.CustomUserDetails;
@@ -33,22 +34,32 @@ public class WorkflowController {
 	private UserRepository userRepository;
 	@Autowired
 	private WorkflowMapper workflowMapper;
-	///
-	///目前 測試 http://localhost:8080/api/workflow/create
-	///Json
-	///{
-	///	    "id": null,
-	///	    "name": "lose",
-	///	    "version": 1,
-	///	    "createdAt": null,
-	///	    "createdBy": 1          
-	///	}
-	///
+	//
+	//目前 測試 http://localhost:8080/api/workflow/create
+	//Json
+	//	{
+	//	    "workflow": {
+	//	        "id": null,
+	//	        "name": "lose",
+	//	        "version": 1,
+	//	        "createdAt": null
+	//	    },
+	//	    "statusDtos": [
+	//	        {
+	//	            "statusMasterId": 1,
+	//	            "allowedTransitions": "{\"next\": [2, 3]}"
+	//	        },
+	//	        {
+	//	            "statusMasterId": 2,
+	//	            "allowedTransitions": "{\"next\": [4]}"
+	//	        }
+	//	    ]
+	//	}
 
 	@PostMapping("/create")
-	public ResponseEntity<ApiResponse<Void>> createWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails , @RequestBody WorkflowDto workflowDto){
+	public ResponseEntity<ApiResponse<Void>> createWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails , @RequestBody WorkflowRequest workflowRequest){
 	    
-	    workflowService.createWorkflow(customUserDetails,workflowDto);
+	    workflowService.createWorkflow(customUserDetails,workflowRequest);
 	    return ResponseEntity.ok(ApiResponse.success("創建成功", null));
 
 	}
@@ -56,10 +67,10 @@ public class WorkflowController {
 	
 	
 	@PostMapping("/update")
-	public ResponseEntity<ApiResponse<Void>> updateWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails ,@RequestBody WorkflowDto workflowDto){
+	public ResponseEntity<ApiResponse<Void>> updateWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails ,@RequestBody WorkflowRequest workflowRequest){
 
 	    
-	    workflowService.updateWorkflow(customUserDetails,workflowDto);
+	    workflowService.updateWorkflow(customUserDetails,workflowRequest);
 	    return ResponseEntity.ok(ApiResponse.success("更改成功", null));
 	}
 	
@@ -71,18 +82,7 @@ public class WorkflowController {
 	    workflowService.deleteWorkflow(customUserDetails ,id);
 	    return ResponseEntity.ok(ApiResponse.success("刪除成功", null));
 	}
-	///
-		///目前 測試 http://localhost:8080/api/workflow/restore
-		///Json
-		///{
-		///	    "id": 1,
-		///	    "name": null,
-		///	    "version": null,
-		///	    "createdAt": null,
-		///	    "createdBy": 1          
-		///	}
-		///配合創建測 id 為刪除的目標
-		///
+
 	@PostMapping("/restore/{id}")
 	public ResponseEntity<ApiResponse<Void>> restoreWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable Long id){
 	    

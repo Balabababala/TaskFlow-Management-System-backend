@@ -43,6 +43,15 @@ public interface WorkflowRepository extends JpaRepository<Workflow, Long>{
     @EntityGraph(attributePaths = {"createdBy"})
     Optional<Workflow> findByIdAndActiveTrue(Long id);
     
-	boolean existsByNameAndVersion(String name, Integer version);
+    @EntityGraph(attributePaths = {"createdBy"})
+    @Query("SELECT w FROM Workflow w WHERE w.active = true " +
+    	       "AND w.version = (SELECT MAX(w2.version) FROM Workflow w2 WHERE w2.name = w.name AND w2.active = true)")
+    	List<Workflow> findLatestWorkflows();
+    
+    @EntityGraph(attributePaths = {"createdBy"})
+    @Query("SELECT w FROM Workflow w WHERE w.name = (SELECT w2.name FROM Workflow w2 WHERE w2.id = :id) " +
+    	       "AND w.active = true ORDER BY w.version DESC LIMIT 1")
+    Optional<Workflow> findLatestWorkflowsById(Long id);
+	boolean existsByName(String name);
 
 }

@@ -5,12 +5,13 @@ import java.util.List;
 
 
 import com.example.demo.model.dto.WorkflowDto;
+import com.example.demo.model.dto.WorkflowRequest;
 import com.example.demo.secure.CustomUserDetails;
 
 	public interface WorkflowService {
-		void createWorkflow(CustomUserDetails customUserDetails,WorkflowDto workflowDto);
+		void createWorkflow(CustomUserDetails customUserDetails,WorkflowRequest workflowRequest);
 		
-		void updateWorkflow(CustomUserDetails customUserDetails,WorkflowDto workflowDto);
+		void updateWorkflow(CustomUserDetails customUserDetails,WorkflowRequest workflowRequest);
 		
 		void deleteWorkflow(CustomUserDetails customUserDetails ,Long id);
 		

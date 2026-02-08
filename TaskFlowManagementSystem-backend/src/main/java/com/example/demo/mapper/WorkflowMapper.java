@@ -26,7 +26,7 @@ public interface WorkflowMapper {
 	}
 	*/
 	
-	    @Mapping(source = "createdBy.id", target = "createdBy")
+
 	    WorkflowDto toDto(Workflow workflow);
 	
 	
@@ -49,7 +49,7 @@ public interface WorkflowMapper {
 	    @Mapping(target = "createdBy", ignore = true) // 在 Service 層手動關聯 User
 	    Workflow toEntity(WorkflowDto workflowDto);
 
-	    // --- DTO 更新至現有的 Entity (更新時使用) ---
+	    // --- DTO 更新至現有的 Entity (更新時使用) --- 用不到了 更新是 version +1 insert 新的
 	    @Mapping(target = "id", ignore = true)        // 防止 ID 被修改
 	    @Mapping(target = "createdAt", ignore = true) // 禁止修改建立時間
 	    @Mapping(target = "updatedAt", ignore = true) // 更新時間交給 Auditing 或 Service
