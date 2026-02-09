@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.exception.RoleNotFoundException;
 import com.example.demo.mapper.RoleMapper;
 import com.example.demo.model.dto.RoleDto;
 import com.example.demo.model.entity.Role;
-import com.example.demo.model.entity.User;
+
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.service.RoleService;
 
@@ -25,7 +25,7 @@ public class RoleServiceImpl implements RoleService{
 	
 	@Override
 	public RoleDto findRole(Integer id) {
-		Role role = roleRepository.findById(id).orElseThrow(() -> new RuntimeException("Role not found"));	
+		Role role = roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException(id));	
 		return roleMapper.toDto(role);
 	}
 

@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.exception.UserConflictException;
 import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.exception.ValidationException;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.model.dto.UserDto;
 import com.example.demo.model.entity.User;
@@ -32,7 +34,7 @@ public class UserServiceImpl implements UserService{
 		boolean exists = userRepository.existsByUsername(userDto.getUsername());
 		// 2. 檢查重複
 		if (userRepository.existsByUsername(userDto.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new UserConflictException("Username already exists");
         }
 		
 		User user = userMapper.toEntity(userDto);
@@ -63,7 +65,7 @@ public class UserServiceImpl implements UserService{
 	public void deleteUser(Long id) {
 		User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));		
 		if (!user.getActive()) {
-		    throw new IllegalStateException("user already deleted");
+		    throw new UserConflictException("user already deleted");
 		}
 		// 等SpringSecure 補好 要加身分檢查
 		user.setActive(false);
@@ -75,7 +77,7 @@ public class UserServiceImpl implements UserService{
 	public void restoreUser(Long id) {
 		User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));		
 		if (user.getActive()) {
-		    throw new IllegalStateException("user already active");
+		    throw new UserConflictException("user already active");
 		}
 		// 等SpringSecure 補好 要加身分檢查
 		user.setActive(true);
@@ -99,13 +101,13 @@ public class UserServiceImpl implements UserService{
 
 	// 將重複的校驗邏輯抽出成私有方法
     private void validateLoginDto(UserDto userDto) {
-        if (userDto.getUsername() == null) throw new IllegalArgumentException("Username cannot be null");
-        if (userDto.getPassword() == null) throw new IllegalArgumentException("Password cannot be null");
+        if (userDto.getUsername() == null) throw new ValidationException("Username cannot be null");
+        if (userDto.getPassword() == null) throw new ValidationException("Password cannot be null");
     }
     private void validateCreateDto(UserDto userDto) {
     	validateLoginDto(userDto);
-    	if (userDto.getEmail() == null) throw new IllegalArgumentException("Email cannot be null");
-        if (userDto.getFullName() == null) throw new IllegalArgumentException("Full Name cannot be null");
+    	if (userDto.getEmail() == null) throw new ValidationException("Email cannot be null");
+        if (userDto.getFullName() == null) throw new ValidationException("Full Name cannot be null");
         
     }
     

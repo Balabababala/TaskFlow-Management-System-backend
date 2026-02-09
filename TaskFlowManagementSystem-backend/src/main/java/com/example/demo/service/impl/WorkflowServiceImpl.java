@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import com.example.demo.exception.RoleNotMatchException;
 import com.example.demo.exception.StatusMasterNotFoundException;
 import com.example.demo.exception.UserNotMatchException;
+import com.example.demo.exception.ValidationException;
+import com.example.demo.exception.WorkflowConflictException;
+import com.example.demo.exception.WorkflowNotFoundException;
 import com.example.demo.mapper.WorkflowMapper;
 import com.example.demo.model.dto.StatusDto;
 import com.example.demo.model.dto.WorkflowDto;
@@ -64,7 +67,7 @@ public class WorkflowServiceImpl implements WorkflowService{
         
         // 3. 檢查重複
         if (workflowRepository.existsByName(workflowDto.getName())) {
-            throw new IllegalArgumentException("Workflow name already exists");
+            throw new WorkflowConflictException("Workflow name already exists");
         }
         // 4. 檢查statusDtos 的 next 的是否存在
         Set<Long> checkNext = extractAllIdsFromJson(statusDtos);
@@ -90,13 +93,13 @@ public class WorkflowServiceImpl implements WorkflowService{
 		
         validateWorkflowDto(workflowDto);       
         if (workflowDto.getId() == null) {
-            throw new IllegalArgumentException("WorkflowDto id cannot be null");
+            throw new ValidationException("WorkflowDto id cannot be null");
         }
         validatestatusDtos(statusDtos);
         
         // 2.檢查權限(身分)
         Workflow existingWorkflow = workflowRepository.findLatestWorkflowsById(workflowDto.getId())
-                .orElseThrow(() -> new RuntimeException("workflow not found"));
+                .orElseThrow(() -> new WorkflowNotFoundException(workflowDto.getId()));
         Long yourId = customUserDetails.getUser().getId();
         Long createByid =existingWorkflow.getCreatedBy().getId();
         boolean isYours= (yourId ==createByid);
@@ -118,10 +121,10 @@ public class WorkflowServiceImpl implements WorkflowService{
 	
 	public void deleteWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails ,Long id) {
 		//1. 基礎校驗
-		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("workflow not found"));
+		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new WorkflowNotFoundException(id));
 		
 		if (!workflow.getActive()) {
-		    throw new IllegalStateException("workflow already deleted");
+		    throw new WorkflowConflictException("workflow already deleted");
 		}
 		//2. 檢查權限(身分)
 
@@ -138,10 +141,10 @@ public class WorkflowServiceImpl implements WorkflowService{
 	
 	public void restoreWorkflow(CustomUserDetails customUserDetails,Long id) {
 		//1. 基礎校驗
-		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("workflow not found"));
+		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new WorkflowNotFoundException(id));
 		
 		if (workflow.getActive()) {
-		    throw new IllegalStateException("workflow already active");
+		    throw new WorkflowConflictException("workflow already active");
 		}
 		//2. 檢查權限(身分)
 		
@@ -156,7 +159,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 	};
 	
 	public WorkflowDto findWorkflow(Long id) {
-		Workflow workflow = workflowRepository.findByIdAndActiveTrue(id).orElseThrow(() -> new RuntimeException("workflow not found"));
+		Workflow workflow = workflowRepository.findByIdAndActiveTrue(id).orElseThrow(() -> new WorkflowNotFoundException(id));
 		return workflowMapper.toDto(workflow);
 		
 	};
@@ -178,7 +181,7 @@ public class WorkflowServiceImpl implements WorkflowService{
         }
 		
 		
-		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new RuntimeException("workflow not found"));
+		Workflow workflow = workflowRepository.findById(id).orElseThrow(() -> new WorkflowNotFoundException(id));
 		return workflowMapper.toDto(workflow);
 		
 	};
@@ -199,15 +202,15 @@ public class WorkflowServiceImpl implements WorkflowService{
 	};
 	// 將重複的校驗邏輯抽出成私有方法
     private void validateWorkflowDto(WorkflowDto workflowtoDto) {
-        if (workflowtoDto.getName() == null) throw new IllegalArgumentException("Name cannot be null");
+        if (workflowtoDto.getName() == null) throw new ValidationException("Name cannot be null");
 
     }
     private void validatestatusDtos(List<StatusDto> statusDtos) {
+    	if(statusDtos.isEmpty()) throw new ValidationException("statusDtos cannot be null");
     	for(StatusDto statusDto:statusDtos) {
-    		if (statusDto.getStatusMasterId() == null) throw new IllegalArgumentException("StatusMasterId cannot be null");
-    		if (statusDto.getAllowedTransitions() == null) throw new IllegalArgumentException("AllowedTransitions cannot be null");
-    	}
-    	
+    		if (statusDto.getStatusMasterId() == null) throw new ValidationException("StatusMasterId cannot be null");
+    		if (statusDto.getAllowedTransitions() == null) throw new ValidationException("AllowedTransitions cannot be null");
+    	} 	
     }
     
     private void create(WorkflowDto workflowDto,List<StatusDto> statusDtos,User user) {
@@ -239,7 +242,6 @@ public class WorkflowServiceImpl implements WorkflowService{
     
     private Set<Long> extractAllIdsFromJson(List<StatusDto> statusDtos) {
         Set<Long> allIds = new HashSet<>();
-        
         for (StatusDto dto : statusDtos) {
             // 1. 先加入節點本身的 ID
             allIds.add(dto.getStatusMasterId());
@@ -253,11 +255,12 @@ public class WorkflowServiceImpl implements WorkflowService{
                     if (nextNode != null && nextNode.isArray()) {
                         for (JsonNode idNode : nextNode) {
                             allIds.add(idNode.asLong());
+                            
                         }
                     }
                 }
             } catch (Exception e) {
-                throw new IllegalArgumentException("JSON 格式錯誤: " + dto.getAllowedTransitions());
+                throw new ValidationException("JSON 格式錯誤: " + dto.getAllowedTransitions());
             }
         }
         return allIds;
