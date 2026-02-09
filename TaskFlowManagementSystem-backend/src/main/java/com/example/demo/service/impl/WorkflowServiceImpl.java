@@ -215,21 +215,28 @@ public class WorkflowServiceImpl implements WorkflowService{
     
     private void create(WorkflowDto workflowDto,List<StatusDto> statusDtos,User user) {
 
-    	
-    	
         Workflow workflow = workflowMapper.toEntity(workflowDto);
         workflow.setCreatedBy(user);
-    	workflow =workflowRepository.save(workflow);
-        
+    	workflow =workflowRepository.save(workflow);  
         Workflow finalWorkflow = workflow; // Lambda 內部使用需要有效最終變數
+        
+        //只有一個起始點
+    	long startNodeCount = statusDtos.stream()
+    	            .filter(dto -> Boolean.TRUE.equals(dto.getIsStartNode()))
+    	            .count();
+    	if (startNodeCount != 1) {
+            throw new ValidationException("工作流必須有且僅有一個起始節點");
+        }
+    	
+    	//statusDtos 轉成 entity (List 版)
         List<Status> statusList = statusDtos.stream()
-                .map(statusDto -> {
+                .map(dto -> {
                     Status status = new Status();
                     status.setWorkflow(finalWorkflow);
-                    status.setAllowedTransitions(statusDto.getAllowedTransitions());
-                    
+                    status.setIsStartNode(dto.getIsStartNode());
+                    status.setAllowedTransitions(dto.getAllowedTransitions());
                     // 補上對 StatusMaster 的關聯 (使用 getReferenceById 效能最好)
-                    status.setStatusMaster(statusMasterRepository.getReferenceById(statusDto.getStatusMasterId()));
+                    status.setStatusMaster(statusMasterRepository.getReferenceById(dto.getStatusMasterId()));
                     
                     return status;
                 })
