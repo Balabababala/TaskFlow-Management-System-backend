@@ -56,39 +56,7 @@ public class WorkflowController {
 	//	    ]
 	//	}
 
-	@PostMapping("/create")
-	public ResponseEntity<ApiResponse<Void>> createWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails , @RequestBody WorkflowRequest workflowRequest){
-	    
-	    workflowService.createWorkflow(customUserDetails,workflowRequest);
-	    return ResponseEntity.ok(ApiResponse.success("創建成功", null));
-
-	}
 	
-	
-	
-	@PostMapping("/update")
-	public ResponseEntity<ApiResponse<Void>> updateWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails ,@RequestBody WorkflowRequest workflowRequest){
-
-	    
-	    workflowService.updateWorkflow(customUserDetails,workflowRequest);
-	    return ResponseEntity.ok(ApiResponse.success("更改成功", null));
-	}
-	
-
-	@DeleteMapping("/delete/{id}")
-	
-	public ResponseEntity<ApiResponse<Void>> deleteWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long id){
-	    
-	    workflowService.deleteWorkflow(customUserDetails ,id);
-	    return ResponseEntity.ok(ApiResponse.success("刪除成功", null));
-	}
-
-	@PostMapping("/restore/{id}")
-	public ResponseEntity<ApiResponse<Void>> restoreWorkflow(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable Long id){
-	    
-	    workflowService.restoreWorkflow(customUserDetails ,id);
-	    return ResponseEntity.ok(ApiResponse.success("回復成功", null));
-	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<ApiResponse<WorkflowDto>> searchWorkflow(@PathVariable Long id){

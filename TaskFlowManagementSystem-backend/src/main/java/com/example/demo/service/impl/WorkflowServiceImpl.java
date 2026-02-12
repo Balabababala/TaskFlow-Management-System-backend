@@ -64,7 +64,7 @@ public class WorkflowServiceImpl implements WorkflowService{
             throw new RoleNotMatchException("admin");
         }
         
-        // 3. 檢查重複
+        // 3. 檢查重複 SQL 有了 可以不用這個
         if (workflowRepository.existsByName(workflowDto.getName())) {
             throw new WorkflowConflictException("Workflow name already exists");
         }

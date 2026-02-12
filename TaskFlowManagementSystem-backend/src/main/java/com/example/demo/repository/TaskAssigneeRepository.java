@@ -23,7 +23,7 @@ public interface TaskAssigneeRepository extends JpaRepository<TaskAssignee, Long
     @EntityGraph(attributePaths = {"task", "status"})
     List<TaskAssignee> findByUserId(Long userId);
 
-//    // 查某使用者負責的某個任務節點
+   
 //    @Query(value = "SELECT ta.id AS ta_id, ta.assigned_at, " +
 //            "t.id AS task_id, t.title, " +
 //            "u.id AS user_id, u.username, " +
@@ -35,5 +35,12 @@ public interface TaskAssigneeRepository extends JpaRepository<TaskAssignee, Long
 //            "WHERE t.id = :taskId",
 //    nativeQuery = true)
 //    List<Optional<TaskAssignee>> findTaskAssigneeWithRelations(@Param("taskId") Long taskId);
-//    
+//
+   	@EntityGraph(attributePaths = {"task", "user", "status"})
+    Boolean existsByTaskIdAndUserIdAndStatusId(Long taskId , Long userId, Long statusId);
+
+   	@EntityGraph(attributePaths = {"task", "user"})
+	boolean existsByTaskIdAndUserId(Long id, Long currentUserId);
+   	
+//    // 查某使用者負責的某個任務節點
 }

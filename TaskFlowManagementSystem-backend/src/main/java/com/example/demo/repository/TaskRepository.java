@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.example.demo.model.entity.Task;
 
@@ -32,4 +34,15 @@ public interface TaskRepository  extends JpaRepository<Task, Long>{
     @Override
     @EntityGraph(attributePaths = {"status", "owner", "workflow"})
     Optional<Task> findById(Long id);
+    
+    @EntityGraph(attributePaths = {"status", "owner", "workflow"})
+	Optional<Task> findByIdAndActiveTrue(Long id);
+
+
+	// 找出所有 Active 且 (我是 Owner 或 我在 Assignee 名單中) 的任務
+    @Query("SELECT DISTINCT t FROM Task t " +
+           "LEFT JOIN TaskAssignee ta ON t.id = ta.task.id " +
+           "WHERE t.active = true " +
+           "AND (t.owner.id = :userId OR ta.user.id = :userId)")
+    List<Task> findAllMyTasks(@Param("userId") Long userId);
 }

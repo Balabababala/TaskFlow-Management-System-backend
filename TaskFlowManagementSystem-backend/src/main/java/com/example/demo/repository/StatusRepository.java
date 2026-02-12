@@ -27,4 +27,8 @@ public interface StatusRepository extends JpaRepository<Status, Long>{
     
 	@EntityGraph(attributePaths = {"statusMaster", "workflow"})
     List<Status> findByWorkflowId(Long workflowId);
+
+	Optional<Status> findAllById();
+
+	Optional<Status> findByWorkflowIdAndIsStartNodeTrue(Long workflowId);
 }

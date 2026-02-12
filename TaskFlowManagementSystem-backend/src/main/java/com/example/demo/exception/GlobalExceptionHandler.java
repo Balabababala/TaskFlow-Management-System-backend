@@ -39,7 +39,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({RoleNotFoundException.class,
     					StatusMasterNotFoundException.class,
     					UserNotFoundException.class,
-    					WorkflowNotFoundException.class})
+    					WorkflowNotFoundException.class,
+    					TaskNotFoundException.class})
     public ResponseEntity<ApiResponse<Void>> handleNotFoundException(Exception ex) {
 
         ex.printStackTrace(); 
@@ -51,7 +52,8 @@ public class GlobalExceptionHandler {
     // 
     @ExceptionHandler({ValidationException.class,
     					RoleNotMatchException.class,
-    					UserNotMatchException.class})
+    					UserNotMatchException.class,
+    					TaskAssigneeNotMatchException.class})
     public ResponseEntity<ApiResponse<Void>> handleValidationException(Exception ex) {
 
         ex.printStackTrace(); 
@@ -62,7 +64,8 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler({WorkflowConflictException.class,
     	UserConflictException.class,
-    	StatusMasterConflictException.class})
+    	StatusMasterConflictException.class,
+    	TaskConflictException.class})
 	public ResponseEntity<ApiResponse<Void>> handleConflictException(Exception ex) {
 
 	ex.printStackTrace(); 
